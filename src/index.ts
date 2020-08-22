@@ -6,6 +6,9 @@ const postActionStateIdentifier = "isPost";
 
 const isPostAction = core.getState(postActionStateIdentifier) !== undefined;
 
+console.log(typeof core.getState(postActionStateIdentifier));
+console.log(isPostAction);
+
 if (!isPostAction) {
   core.saveState(postActionStateIdentifier, "true");
 
