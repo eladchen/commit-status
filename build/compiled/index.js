@@ -24,8 +24,6 @@ const main_1 = require("./actions/main");
 const post_1 = require("./actions/post");
 const postActionStateIdentifier = "ben-isPost";
 const isPostAction = process.env[`STATE_${postActionStateIdentifier}`] !== undefined;
-console.log(typeof process.env[`STATE_${postActionStateIdentifier}`]);
-console.log(isPostAction);
 if (!isPostAction) {
     core.saveState(postActionStateIdentifier, "true");
     main_1.action();

@@ -21,6 +21,8 @@ type BotContext = {
 const getBotContext = (): BotContext | null => {
   const eventInput = github.context.payload?.inputs?.event || null;
 
+  console.log(JSON.stringify(eventInput));
+
   if (eventInput !== null) {
     return {
       owner: eventInput.repository.owner.login,
