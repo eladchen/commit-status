@@ -4,14 +4,13 @@ import { action as postAction } from "./actions/post";
 
 const postActionStateIdentifier = "isPost";
 
-const isPostAction = process.env[`STATE_${postActionStateIdentifier}`] !== undefined;
+const isPostAction = core.getState(postActionStateIdentifier) !== undefined;
 
 if (!isPostAction) {
   core.saveState(postActionStateIdentifier, "true");
-}
 
-if (isPostAction) {
   mainAction();
-} else {
+} //
+else {
   postAction();
 }
