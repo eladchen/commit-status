@@ -22,7 +22,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
 const main_1 = require("./actions/main");
 const post_1 = require("./actions/post");
-const postActionStateIdentifier = "isPost";
+const postActionStateIdentifier = "ben-isPost";
 const isPostAction = core.getState(postActionStateIdentifier) !== undefined;
 console.log(typeof core.getState(postActionStateIdentifier));
 console.log(isPostAction);

@@ -2,7 +2,7 @@ import * as core from "@actions/core";
 import { action as mainAction } from "./actions/main";
 import { action as postAction } from "./actions/post";
 
-const postActionStateIdentifier = "isPost";
+const postActionStateIdentifier = "ben-isPost";
 
 const isPostAction = core.getState(postActionStateIdentifier) !== undefined;
 
