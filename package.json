@@ -1,0 +1,53 @@
+{
+  "private": true,
+  "scripts": {
+    "outdated": "npx npm-check -u",
+    "lint": "eslint --format pretty --ext=.js,.ts --fix .",
+    "lint:check": "eslint --print-config .eslintrc.js | eslint-config-prettier-check",
+    "compile": "rimraf compiled && tsc",
+    "test": "jest --projects .",
+    "test:watch": "npm run test -- --watchAll",
+    "test:integration": "jest --projects src/drivers/github-probot/__integration__",
+    "build": "npm run lint && npm run compile",
+    "clean": "rimraf build",
+    "clean:build": "npm run clean && npm run build",
+    "github-probot": "ts-node-dev --debounce 2000 ./src/drivers/github-probot/bot.ts"
+  },
+  "devDependencies": {
+    "@types/faker": "^4.1.12",
+    "@types/jest": "^26.0.0",
+    "@types/jest-expect-message": "^1.0.2",
+    "@types/node": "^12.12.47",
+    "@types/node-fetch": "^2.5.7",
+    "@typescript-eslint/eslint-plugin": "^3.2.0",
+    "@typescript-eslint/parser": "^3.2.0",
+    "commitizen": "^4.1.2",
+    "cz-conventional-changelog": "^3.2.0",
+    "eslint": "^7.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-formatter-pretty": "^4.0.0",
+    "eslint-plugin-import": "^2.21.2",
+    "eslint-plugin-jest": "^23.13.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "faker": "^4.1.0",
+    "husky": "^4.2.5",
+    "jest": "^26.0.1",
+    "jest-expect-message": "^1.0.2",
+    "lint-staged": "^10.2.10",
+    "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
+    "standard": "^14.3.4",
+    "ts-jest": "^26.1.0",
+    "ts-node-dev": "^1.0.0-pre.56",
+    "typescript": "^3.9.5"
+  },
+  "dependencies": {
+    "@actions/core": "^1.2.4",
+    "@actions/github": "^4.0.0",
+    "await-to-js": "^2.1.1"
+  }
+}
