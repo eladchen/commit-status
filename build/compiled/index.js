@@ -23,11 +23,9 @@ const core = __importStar(require("@actions/core"));
 const main_1 = require("./actions/main");
 const post_1 = require("./actions/post");
 const postActionStateIdentifier = "isPost";
-const isPostAction = process.env[`STATE_${postActionStateIdentifier}`] !== undefined;
+const isPostAction = core.getState(postActionStateIdentifier) !== undefined;
 if (!isPostAction) {
     core.saveState(postActionStateIdentifier, "true");
-}
-if (isPostAction) {
     main_1.action();
 }
 else {
