@@ -62,6 +62,8 @@ async function action(): Promise<void> {
       core.setOutput("repositoryName", botContext.repo);
       core.setOutput("repositorySha", botContext.sha);
 
+      core.info(`createCommitStatusParameters.target_url ${typeof createCommitStatusParameters.target_url}`);
+
       if (createCommitStatusParameters.owner === undefined) {
         createCommitStatusParameters.owner = botContext.owner;
       }
