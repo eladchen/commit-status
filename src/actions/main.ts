@@ -62,21 +62,21 @@ async function action(): Promise<void> {
       core.setOutput("repositoryName", botContext.repo);
       core.setOutput("repositorySha", botContext.sha);
 
-      core.info(`createCommitStatusParameters.target_url ${typeof createCommitStatusParameters.target_url}`);
+      core.info(`createCommitStatusParameters.target_url ${createCommitStatusParameters.target_url}`);
 
-      if (createCommitStatusParameters.owner === undefined) {
+      if (!createCommitStatusParameters.owner) {
         createCommitStatusParameters.owner = botContext.owner;
       }
 
-      if (createCommitStatusParameters.repo === undefined) {
+      if (!createCommitStatusParameters.repo) {
         createCommitStatusParameters.repo = botContext.repo;
       }
 
-      if (createCommitStatusParameters.sha === undefined) {
+      if (!createCommitStatusParameters.sha) {
         createCommitStatusParameters.sha = botContext.sha;
       }
 
-      if (createCommitStatusParameters.target_url === undefined) {
+      if (!createCommitStatusParameters.target_url) {
         const token = core.getInput("token", { required: true });
         const octokit = github.getOctokit(token);
         const workflowRun = await octokit.actions.getWorkflowRun({
