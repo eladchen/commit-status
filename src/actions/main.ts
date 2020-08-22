@@ -19,7 +19,7 @@ type BotContext = {
 // type CreateCommitStatusParameters = Endpoints["POST /repos/:owner/:repo/statuses/:sha"]["parameters"];
 
 const getBotContext = (): BotContext | null => {
-  const eventInput = github.context.payload?.inputs?.event || null;
+  const eventInput = JSON.parse(github.context.payload?.inputs?.event || null);
 
   console.log(`eventInput: ${JSON.stringify(eventInput, null, 2)}`);
 

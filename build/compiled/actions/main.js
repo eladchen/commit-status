@@ -34,7 +34,7 @@ const github = __importStar(require("@actions/github"));
 const create_commit_status_parameters_1 = require("../create-commit-status-parameters");
 const getBotContext = () => {
     var _a, _b;
-    const eventInput = ((_b = (_a = github.context.payload) === null || _a === void 0 ? void 0 : _a.inputs) === null || _b === void 0 ? void 0 : _b.event) || null;
+    const eventInput = JSON.parse(((_b = (_a = github.context.payload) === null || _a === void 0 ? void 0 : _a.inputs) === null || _b === void 0 ? void 0 : _b.event) || null);
     console.log(`eventInput: ${JSON.stringify(eventInput, null, 2)}`);
     if (eventInput !== null) {
         console.log(`eventInput.repository: ${JSON.stringify(eventInput.repository, null, 2)}`);
