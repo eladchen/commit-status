@@ -23,8 +23,8 @@ const core = __importStar(require("@actions/core"));
 const main_1 = require("./actions/main");
 const post_1 = require("./actions/post");
 const postActionStateIdentifier = "ben-isPost";
-const isPostAction = core.getState(postActionStateIdentifier) !== undefined;
-console.log(typeof core.getState(postActionStateIdentifier));
+const isPostAction = process.env[`STATE_${postActionStateIdentifier}`] !== undefined;
+console.log(typeof process.env[`STATE_${postActionStateIdentifier}`]);
 console.log(isPostAction);
 if (!isPostAction) {
     core.saveState(postActionStateIdentifier, "true");

@@ -2,11 +2,15 @@ import * as core from "@actions/core";
 import { action as mainAction } from "./actions/main";
 import { action as postAction } from "./actions/post";
 
+// GITHUB_RUN_ID = 219737679
+// GITHUB_RUN_NUMBER = 81
+// GITHUB_WORKFLOW = Pull Request
+
 const postActionStateIdentifier = "ben-isPost";
 
-const isPostAction = core.getState(postActionStateIdentifier) !== undefined;
+const isPostAction = process.env[`STATE_${postActionStateIdentifier}`] !== undefined;
 
-console.log(typeof core.getState(postActionStateIdentifier));
+console.log(typeof process.env[`STATE_${postActionStateIdentifier}`]);
 console.log(isPostAction);
 
 if (!isPostAction) {
