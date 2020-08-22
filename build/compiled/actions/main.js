@@ -35,8 +35,10 @@ const create_commit_status_parameters_1 = require("../create-commit-status-param
 const getBotContext = () => {
     var _a, _b;
     const eventInput = ((_b = (_a = github.context.payload) === null || _a === void 0 ? void 0 : _a.inputs) === null || _b === void 0 ? void 0 : _b.event) || null;
-    console.log(JSON.stringify(eventInput));
+    console.log(`eventInput: ${JSON.stringify(eventInput, null, 2)}`);
     if (eventInput !== null) {
+        console.log(`eventInput.repository: ${JSON.stringify(eventInput.repository, null, 2)}`);
+        console.log(`eventInput.pull_request: ${JSON.stringify(eventInput.pull_request, null, 2)}`);
         return {
             owner: eventInput.repository.owner.login,
             repo: eventInput.repository.name,
