@@ -28,6 +28,6 @@ const setParameters = (parameters) => {
 exports.setParameters = setParameters;
 const getParameters = () => {
     const parameters = core.getState(parametersStateIdentifier);
-    return JSON.parse(parameters);
+    return parameters ? JSON.parse(parameters) : null;
 };
 exports.getParameters = getParameters;

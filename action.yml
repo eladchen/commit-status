@@ -6,6 +6,11 @@ description: >
   See https://docs.github.com/en/rest/reference/repos#create-a-commit-status
 
 inputs:
+  token:
+    description: 'A Github API authentication token'
+    required: false
+    default: '${{ github.token }}'
+
   accept:
     description: 'Create Commit Status "accept" parameter (header)'
     required: false

@@ -7,7 +7,7 @@ import { action as postAction } from "./actions/post";
 // GITHUB_WORKFLOW = Pull Request
 // https://github.com/eladchen/testing/runs/1016054648?check_suite_focus=true
 
-const postActionStateIdentifier = "ben-isPost";
+const postActionStateIdentifier = "isPost";
 
 const isPostAction = process.env[`STATE_${postActionStateIdentifier}`] !== undefined;
 

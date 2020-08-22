@@ -35,11 +35,15 @@ const create_commit_status_parameters_1 = require("../create-commit-status-param
 function action() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            const parameters = create_commit_status_parameters_1.getParameters();
+            console.log(`github: ${JSON.stringify(github, null, 2)}`);
+            console.log(`parameters ${JSON.stringify(create_commit_status_parameters_1.getParameters())}`);
             Object.keys(process.env).forEach((key) => {
                 console.log(`${key} = ${process.env[key]}`);
             });
-            console.log(`github: ${JSON.stringify(github)}`);
-            console.log(`parameters ${JSON.stringify(create_commit_status_parameters_1.getParameters())}`);
+            if (parameters === null) {
+                core.error(`No create commit status parameters found.`);
+            }
         }
         catch (e) {
             core.setFailed(e.message);

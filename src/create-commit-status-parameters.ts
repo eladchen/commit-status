@@ -44,10 +44,10 @@ const setParameters = (parameters: Record<string, any>) => {
   core.saveState(parametersStateIdentifier, JSON.stringify(parameters));
 };
 
-const getParameters = (): Record<string, any> => {
+const getParameters = (): Record<string, any> | null => {
   const parameters = core.getState(parametersStateIdentifier);
 
-  return JSON.parse(parameters);
+  return parameters ? JSON.parse(parameters) : null;
 };
 
 export { setParameters, getParameters };
