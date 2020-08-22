@@ -3,6 +3,8 @@ name: 'Ben Rodríguez'
 description: >
   Set the commit status for workflows triggered by bvr.
 
+  See https://docs.github.com/en/rest/reference/repos#create-a-commit-status
+
 inputs:
   accept:
     description: 'Create Commit Status "accept" parameter (header)'
