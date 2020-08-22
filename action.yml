@@ -11,6 +11,11 @@ inputs:
     required: false
     default: '${{ github.token }}'
 
+  update-commit-status:
+    description: 'Whether to update the commit status to the workflow run conclusion'
+    required: false
+    default: 'true'
+
   accept:
     description: 'Create Commit Status "accept" parameter (header)'
     required: false

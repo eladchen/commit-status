@@ -31,18 +31,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.action = void 0;
 const core = __importStar(require("@actions/core"));
 const github = __importStar(require("@actions/github"));
+const octokit_1 = require("../octokit");
 const create_commit_status_parameters_1 = require("../create-commit-status-parameters");
 function action() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const parameters = create_commit_status_parameters_1.getParameters();
-            console.log(`github: ${JSON.stringify(github, null, 2)}`);
-            console.log(`parameters ${JSON.stringify(create_commit_status_parameters_1.getParameters())}`);
-            Object.keys(process.env).forEach((key) => {
-                console.log(`${key} = ${process.env[key]}`);
-            });
-            if (parameters === null) {
-                core.error(`No create commit status parameters found.`);
+            const updateCommitStatus = Boolean(core.getInput("update-commit-status") || "true");
+            if (updateCommitStatus) {
+                const parameters = create_commit_status_parameters_1.getParameters();
+                if (parameters === null) {
+                    core.error(`No create commit status parameters found.`);
+                    return;
+                }
+                const workflowRun = yield octokit_1.octokit().actions.getWorkflowRun({
+                    owner: parameters.owner,
+                    repo: parameters.repo,
+                    run_id: github.context.runId,
+                });
+                console.log(JSON.stringify(workflowRun, null, 2));
             }
         }
         catch (e) {

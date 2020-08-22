@@ -31,6 +31,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.action = void 0;
 const core = __importStar(require("@actions/core"));
 const github = __importStar(require("@actions/github"));
+const octokit_1 = require("../octokit");
 const create_commit_status_parameters_1 = require("../create-commit-status-parameters");
 const getBotContext = () => {
     var _a, _b;
@@ -71,7 +72,6 @@ function action() {
                 core.setOutput("repositoryOwner", botContext.owner);
                 core.setOutput("repositoryName", botContext.repo);
                 core.setOutput("repositorySha", botContext.sha);
-                core.info(`createCommitStatusParameters.target_url ${createCommitStatusParameters.target_url}`);
                 if (!createCommitStatusParameters.owner) {
                     createCommitStatusParameters.owner = botContext.owner;
                 }
@@ -82,9 +82,7 @@ function action() {
                     createCommitStatusParameters.sha = botContext.sha;
                 }
                 if (!createCommitStatusParameters.target_url) {
-                    const token = core.getInput("token", { required: true });
-                    const octokit = github.getOctokit(token);
-                    const workflowRun = yield octokit.actions.getWorkflowRun({
+                    const workflowRun = yield octokit_1.octokit().actions.getWorkflowRun({
                         owner: botContext.owner,
                         repo: botContext.repo,
                         run_id: github.context.runId,
