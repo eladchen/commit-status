@@ -5,7 +5,7 @@ import { getParameters } from "../create-commit-status-parameters";
 async function action(): Promise<void> {
   try {
     Object.keys(process.env).forEach((key) => {
-      console.log(`${key} = process.env[key]`);
+      console.log(`${key} = ${process.env[key]}`);
     });
 
     console.log(`github: ${JSON.stringify(github)}`);

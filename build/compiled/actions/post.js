@@ -36,7 +36,7 @@ function action() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             Object.keys(process.env).forEach((key) => {
-                console.log(`${key} = process.env[key]`);
+                console.log(`${key} = ${process.env[key]}`);
             });
             console.log(`github: ${JSON.stringify(github)}`);
             console.log(`parameters ${JSON.stringify(create_commit_status_parameters_1.getParameters())}`);
