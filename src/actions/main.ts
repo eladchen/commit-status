@@ -1,5 +1,6 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
+import { setParameters } from "../create-commit-status-parameters";
 
 /*
  * https://github.com/actions/toolkit/tree/master/packages/core
@@ -9,16 +10,73 @@ import * as github from "@actions/github";
  * https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#referencing-actions-in-your-workflow
  **/
 
+type BotContext = {
+  owner: string;
+  repo: string;
+  sha: string;
+};
+
+// type CreateCommitStatusParameters = Endpoints["POST /repos/:owner/:repo/statuses/:sha"]["parameters"];
+
+const getBotContext = (): BotContext | null => {
+  const eventInput = github.context.payload?.inputs?.event || null;
+
+  if (eventInput !== null) {
+    return {
+      owner: eventInput.repository.owner.login,
+      repo: eventInput.repository.name,
+      sha: eventInput.pull_request.head.sha,
+    };
+  }
+
+  return null;
+};
+
+const getCreateCommitStatusParameters = (): Record<string, any> => {
+  const accept = core.getInput("accept");
+  const owner = core.getInput("owner");
+  const repo = core.getInput("repo");
+  const sha = core.getInput("sha");
+  // const target_url = core.getInput("target_url") || "extract the value from the github object";
+  const description = core.getInput("description");
+  const context = core.getInput("context");
+
+  return {
+    accept,
+    owner,
+    repo,
+    sha,
+    description,
+    context,
+  };
+};
+
 async function action(): Promise<void> {
   try {
-    // `who-to-greet` input defined in action metadata file
-    const nameToGreet = core.getInput("who-to-greet");
-    console.log(`Hello ${nameToGreet}!`);
-    const time = new Date().toTimeString();
-    core.setOutput("time", time);
-    // Get the JSON webhook payload for the event that triggered the workflow
-    const payload = JSON.stringify(github.context.payload, undefined, 2);
-    console.log(`The event payload: ${payload}`);
+    const botContext = getBotContext();
+    const createCommitStatusParameters = getCreateCommitStatusParameters();
+
+    if (botContext !== null) {
+      core.setOutput("repositoryOwner", botContext.owner);
+      core.setOutput("repositoryName", botContext.repo);
+      core.setOutput("repositorySha", botContext.sha);
+
+      if (createCommitStatusParameters.owner === undefined) {
+        createCommitStatusParameters.owner = botContext.owner;
+      }
+
+      if (createCommitStatusParameters.repo === undefined) {
+        createCommitStatusParameters.repo = botContext.repo;
+      }
+
+      if (createCommitStatusParameters.sha === undefined) {
+        createCommitStatusParameters.sha = botContext.sha;
+      }
+    }
+
+    setParameters(createCommitStatusParameters);
+
+    console.log(`The event payload: ${JSON.stringify(github, undefined, 2)}`);
   } catch (e) {
     core.setFailed(e.message);
   }

@@ -59,6 +59,14 @@ const config = {
 
     // https://github.com/jest-community/eslint-plugin-jest/blob/master/docs/rules/valid-expect.md
     "jest/valid-expect": ["error", { maxArgs: 2 }],
+
+    // https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/docs/rules/ban-ts-comment.md
+    "@typescript-eslint/ban-ts-comment": [
+      "error",
+      {
+        "ts-expect-error": "allow-with-description",
+      },
+    ],
   },
 
   overrides: [

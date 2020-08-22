@@ -4,14 +4,58 @@ description: >
   Set the commit status for workflows triggered by bvr.
 
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
-    required: true
-    default: 'World'
+  accept:
+    description: 'Create Commit Status "accept" parameter (header)'
+    required: false
+    default: 'application/vnd.github.v3+json'
+
+  owner:
+    description: 'Create Commit Status "owner" parameter (path)'
+    required: false
+
+  repo:
+    description: 'Create Commit Status "repo" parameter (path)'
+    required: false
+
+  sha:
+    description: 'Create Commit Status "sha" parameter (path)'
+    required: false
+
+  target_url:
+    description: 'Create Commit Status "target_url" parameter (body)'
+    required: false
+
+  description:
+    description: 'Create Commit Status "description" parameter (body)'
+    required: false
+
+  context:
+    description: 'Create Commit Status "context" parameter (body)'
+    required: false
+    default: "ben-rodriguez"
 
 outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+  repositoryOwner:
+    description: >
+      The repository owner is the organization name / github user that owns the
+      repository used by this run.
+
+      Note: This output will only be set when the workflow has
+      inputs matching the ones set when Ben Rodriguez (Bot) triggers the run.
+
+  repositoryName:
+    description: >
+      The repository name is used by this run.
+
+      Note: This output will only be set when the workflow has
+      inputs matching the ones set when Ben Rodriguez (Bot) triggers the run.
+
+  repositorySha:
+    description: >
+      The repository SHA name is used by this run.
+
+      Note: This output will only be set when the workflow has
+      inputs matching the ones set when Ben Rodriguez (Bot) triggers the run.
 
 runs:
   using: 'node12'
