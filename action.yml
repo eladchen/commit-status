@@ -15,4 +15,4 @@ outputs:
 
 runs:
   using: 'node12'
-  main: 'build/compiled/main-action.js'
+  main: 'build/bundled/index.js'
