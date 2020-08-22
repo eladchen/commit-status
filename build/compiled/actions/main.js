@@ -49,6 +49,7 @@ const getCreateCommitStatusParameters = () => {
     const owner = core.getInput("owner");
     const repo = core.getInput("repo");
     const sha = core.getInput("sha");
+    const targetUrl = core.getInput("target_url");
     const description = core.getInput("description");
     const context = core.getInput("context");
     return {
@@ -56,6 +57,7 @@ const getCreateCommitStatusParameters = () => {
         owner,
         repo,
         sha,
+        target_url: targetUrl,
         description,
         context,
     };
@@ -78,9 +80,18 @@ function action() {
                 if (createCommitStatusParameters.sha === undefined) {
                     createCommitStatusParameters.sha = botContext.sha;
                 }
+                if (createCommitStatusParameters.target_url === undefined) {
+                    const token = core.getInput("token", { required: true });
+                    const octokit = github.getOctokit(token);
+                    const workflowRun = yield octokit.actions.getWorkflowRun({
+                        owner: botContext.owner,
+                        repo: botContext.repo,
+                        run_id: github.context.runId,
+                    });
+                    createCommitStatusParameters.target_url = workflowRun.data.html_url;
+                }
             }
             create_commit_status_parameters_1.setParameters(createCommitStatusParameters);
-            console.log(`The event payload: ${JSON.stringify(github, undefined, 2)}`);
         }
         catch (e) {
             core.setFailed(e.message);

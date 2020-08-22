@@ -5,6 +5,7 @@ import { action as postAction } from "./actions/post";
 // GITHUB_RUN_ID = 219737679
 // GITHUB_RUN_NUMBER = 81
 // GITHUB_WORKFLOW = Pull Request
+// https://github.com/eladchen/testing/runs/1016054648?check_suite_focus=true
 
 const postActionStateIdentifier = "ben-isPost";
 
