@@ -4,6 +4,9 @@ import github from "@actions/github";
 /*
  * https://github.com/actions/toolkit/tree/master/packages/core
  * https://github.com/actions/toolkit/tree/master/packages/github
+ * https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action
+ * https://github.com/actions/javascript-action
+ * https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#referencing-actions-in-your-workflow
  **/
 
 async function run(): Promise<void> {
