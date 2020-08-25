@@ -53,21 +53,21 @@ outputs:
       repository used by this run.
 
       Note: This output will only be set when the workflow has
-      inputs matching the ones set when Ben Rodriguez (Bot) triggers the run.
+      inputs matching those set when Ben Rodriguez (Bot) triggers the run.
 
   repositoryName:
     description: >
-      The repository name is used by this run.
+      The repository name used by this run.
 
       Note: This output will only be set when the workflow has
-      inputs matching the ones set when Ben Rodriguez (Bot) triggers the run.
+      inputs matching those set when Ben Rodriguez (Bot) triggers the run.
 
-  repositorySha:
+  commitSHA:
     description: >
-      The repository SHA name is used by this run.
+      The commit SHA used by this run.
 
       Note: This output will only be set when the workflow has
-      inputs matching the ones set when Ben Rodriguez (Bot) triggers the run.
+      inputs matching those set when Ben Rodriguez (Bot) triggers the run.
 
 runs:
   using: 'node12'
