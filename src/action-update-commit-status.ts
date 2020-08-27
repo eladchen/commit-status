@@ -50,6 +50,8 @@ const jobConclusionToCommitStatusState = (conclusion: string | null): CommitStat
 };
 
 const action = async (commitStatusParameters: CommitStatusParameters): Promise<void> => {
+  await new Promise((resolve) => setTimeout(resolve, 10000));
+
   if (actionInputs.updateCommitStatus()) {
     const workflowRunJobs = await octokit.listJobsForWorkflowRun({
       owner: commitStatusParameters.owner,
