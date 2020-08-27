@@ -65,6 +65,8 @@ const action = async (commitStatusParameters: CommitStatusParameters): Promise<v
 
       core.info(`Job '${job.name}' commit state is ${commitStatusState}`);
 
+      core.info(JSON.stringify(job));
+
       await octokit.createCommitStatus({
         ...commitStatusParameters,
         state: commitStatusState,
