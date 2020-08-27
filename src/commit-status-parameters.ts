@@ -1,9 +1,9 @@
 import { Context } from "@actions/github/lib/context";
 
+import { getWorkflowRun } from "./octokit";
 import * as actionInputs from "./action-inputs";
-import { getWorkflowRun } from "./get-workflow-run";
 
-type GetCommitStatusParameters = {
+type CommitStatusParameters = {
   sha: string;
   repo: string;
   owner: string;
@@ -13,7 +13,7 @@ type GetCommitStatusParameters = {
   description: string;
 };
 
-const getCommitStatusParameters = async (context: Context): Promise<GetCommitStatusParameters> => {
+const commitStatusParameters = async (context: Context): Promise<CommitStatusParameters> => {
   const parameters = {
     sha: actionInputs.shaInput(),
     repo: actionInputs.repoInput(),
@@ -39,12 +39,12 @@ const getCommitStatusParameters = async (context: Context): Promise<GetCommitSta
   }
 
   if (!parameters.description) {
-    parameters.description = `${context.workflow} / ${context.job}`;
+    parameters.description = `${context.workflow} / ${context.job} (${context.eventName})`;
   }
 
   return parameters;
 };
 
-export type { GetCommitStatusParameters };
+export type { CommitStatusParameters };
 
-export { getCommitStatusParameters };
+export { commitStatusParameters };

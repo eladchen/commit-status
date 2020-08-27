@@ -48,18 +48,13 @@ const withPayload = (payload, cb) => {
 };
 
 describe(actionInputs.shaInput, () => {
-  test("when action input is provided then action input value is read", async () => {
-    const expected = "input";
-    const inputs = { sha: expected };
+  test("sha input is required", () => {
+    const cb = () => actionInputs.shaInput();
 
-    await withInputs(inputs, async () => {
-      const actual = actionInputs.shaInput();
-
-      expect(actual).toStrictEqual(expected);
-    });
+    expect(cb).toThrowError("'sha' input must be a non empty string");
   });
 
-  test("when action input is falsy then read from payload", async () => {
+  test("sha input is read from payload", () => {
     const expected = "123";
     const payload = {
       inputs: {
@@ -74,26 +69,26 @@ describe(actionInputs.shaInput, () => {
     });
   });
 
-  test("when no value is found then error is thrown", () => {
-    const cb = () => actionInputs.shaInput();
-
-    expect(cb).toThrowError("'sha' input must be a non empty string");
-  });
-});
-
-describe(actionInputs.repoInput, () => {
-  test("when action input is provided then action input value is read", async () => {
+  test("sha input is read from action sha input", async () => {
     const expected = "input";
-    const inputs = { repo: expected };
+    const inputs = { sha: expected };
 
     await withInputs(inputs, async () => {
-      const actual = actionInputs.repoInput();
+      const actual = actionInputs.shaInput();
 
       expect(actual).toStrictEqual(expected);
     });
   });
+});
 
-  test("when action input is falsy then read from payload", async () => {
+describe(actionInputs.repoInput, () => {
+  test("repo input is required", () => {
+    const cb = () => actionInputs.repoInput();
+
+    expect(cb).toThrowError("'repo' input must be a non empty string");
+  });
+
+  test("repo input is read from payload", () => {
     const expected = "testing";
     const payload = {
       inputs: {
@@ -108,26 +103,26 @@ describe(actionInputs.repoInput, () => {
     });
   });
 
-  test("when no value is found then error is thrown", () => {
-    const cb = () => actionInputs.repoInput();
-
-    expect(cb).toThrowError("'repo' input must be a non empty string");
-  });
-});
-
-describe(actionInputs.ownerInput, () => {
-  test("when action input is provided then action input value is read", async () => {
+  test("repo input is read from action sha input", async () => {
     const expected = "input";
-    const inputs = { owner: expected };
+    const inputs = { repo: expected };
 
     await withInputs(inputs, async () => {
-      const actual = actionInputs.ownerInput();
+      const actual = actionInputs.repoInput();
 
       expect(actual).toStrictEqual(expected);
     });
   });
+});
 
-  test("when action input is falsy then read from payload", async () => {
+describe(actionInputs.ownerInput, () => {
+  test("owner input is required", () => {
+    const cb = () => actionInputs.ownerInput();
+
+    expect(cb).toThrowError("'owner' input must be a non empty string");
+  });
+
+  test("owner input is read from payload", () => {
     const expected = "elad";
     const payload = {
       inputs: {
@@ -142,15 +137,20 @@ describe(actionInputs.ownerInput, () => {
     });
   });
 
-  test("when no value is found then error is thrown", () => {
-    const cb = () => actionInputs.ownerInput();
+  test("owner input is read from action sha input", async () => {
+    const expected = "input";
+    const inputs = { owner: expected };
 
-    expect(cb).toThrowError("'owner' input must be a non empty string");
+    await withInputs(inputs, async () => {
+      const actual = actionInputs.ownerInput();
+
+      expect(actual).toStrictEqual(expected);
+    });
   });
 });
 
 describe(actionInputs.eventInput, () => {
-  test("when workflow 'event' input is defined then object is returned", () => {
+  test("event input is read from payload", () => {
     const expected = createEventInput("elad", "test", "123");
     const payload = {
       inputs: {
@@ -165,7 +165,7 @@ describe(actionInputs.eventInput, () => {
     });
   });
 
-  test("when workflow 'event' input is undefined then null is returned", () => {
+  test("null is returned when there event input is undefined", () => {
     const actual = actionInputs.eventInput();
 
     expect(actual).toBeNull();
@@ -173,8 +173,8 @@ describe(actionInputs.eventInput, () => {
 });
 
 describe(actionInputs.updateCommitStatus, () => {
-  test("when action input is 'false' then false is returned", async () => {
-    const expected = false;
+  test("is true", async () => {
+    const expected = true;
     const inputs = {
       "update-commit-status": String(expected),
     };
@@ -186,8 +186,8 @@ describe(actionInputs.updateCommitStatus, () => {
     });
   });
 
-  test("when action input is any string then true is returned", async () => {
-    const expected = true;
+  test("is false", async () => {
+    const expected = false;
     const inputs = {
       "update-commit-status": String(expected),
     };

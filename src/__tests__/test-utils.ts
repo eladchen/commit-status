@@ -1,4 +1,6 @@
 import * as core from "@actions/core";
+import * as github from "@actions/github";
+import { Context } from "@actions/github/lib/context";
 
 const withInputs = async <T>(inputs: { [name: string]: string }, cb: (...args: any[]) => T): Promise<T> => {
   const spyInstance = jest.spyOn(core, "getInput");
@@ -26,4 +28,18 @@ const withInputs = async <T>(inputs: { [name: string]: string }, cb: (...args: a
   return error ? Promise.reject(error) : Promise.resolve(value);
 };
 
-export { withInputs };
+const withContext = <T>(context: Context, cb: () => T) => {
+  const c = github.context;
+
+  try {
+    // @ts-expect-error replacing context
+    github.context = context;
+
+    return cb();
+  } finally {
+    // @ts-expect-error restoring context
+    github.context = c;
+  }
+};
+
+export { withInputs, withContext };
