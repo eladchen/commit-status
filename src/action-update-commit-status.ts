@@ -61,8 +61,8 @@ const action = async (commitStatusParameters: CommitStatusParameters): Promise<v
 
     core.info(`Updating commit status for sha '${commitStatusParameters.sha}'`);
 
-    // @ts-expect-error workflowRunJobs this is an array
     for (const job of workflowRunJobs) {
+      // if job.name === github.context.job
       const commitStatusState = jobConclusionToCommitStatusState(job.conclusion);
 
       core.info(`Job '${job.name}' commit state is ${commitStatusState}`);

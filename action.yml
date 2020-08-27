@@ -1,9 +1,15 @@
 name: 'Ben Rodríguez'
 
+author: Elad Chen
+
 description: >
   Set the commit status for workflows triggered by bvr.
 
   See https://docs.github.com/en/rest/reference/repos#create-a-commit-status
+
+branding:
+  icon: shield
+  color: green
 
 inputs:
   token:
@@ -44,7 +50,6 @@ inputs:
   context:
     description: 'Create Commit Status "context" parameter (body)'
     required: false
-    default: "ben-rodriguez"
 
 outputs:
   repositoryOwner:

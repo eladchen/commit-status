@@ -29,6 +29,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.listJobsForWorkflowRun = exports.createCommitStatus = exports.getWorkflowRun = void 0;
+const core = __importStar(require("@actions/core"));
 const github = __importStar(require("@actions/github"));
 const action_inputs_1 = require("./action-inputs");
 const getOctokit = () => {
@@ -42,6 +43,7 @@ const getWorkflowRun = (parameters) => __awaiter(void 0, void 0, void 0, functio
 exports.getWorkflowRun = getWorkflowRun;
 const createCommitStatus = (params) => __awaiter(void 0, void 0, void 0, function* () {
     const octokit = getOctokit();
+    core.info(`Updating commit status for sha '${params.sha}' to ${params.state}`);
     return yield octokit.repos.createCommitStatus(params);
 });
 exports.createCommitStatus = createCommitStatus;

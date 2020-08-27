@@ -25,7 +25,7 @@ const commitStatusParameters = async (context: Context): Promise<CommitStatusPar
   };
 
   if (!parameters.context) {
-    parameters.context = context.workflow;
+    parameters.context = `${context.job} (${context.eventName})`;
   }
 
   if (!parameters.target_url) {
@@ -39,7 +39,7 @@ const commitStatusParameters = async (context: Context): Promise<CommitStatusPar
   }
 
   if (!parameters.description) {
-    parameters.description = `${context.workflow} / ${context.job} (${context.eventName})`;
+    // TODO: `description` can be put to good use.
   }
 
   return parameters;

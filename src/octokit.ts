@@ -1,3 +1,4 @@
+import * as core from "@actions/core";
 import * as github from "@actions/github";
 import { GitHub } from "@actions/github/lib/utils";
 import { ActionsListJobsForWorkflowRunResponseData } from "@octokit/types";
@@ -9,7 +10,7 @@ type GetWorkflowRunParameters = RestEndpointMethodTypes["actions"]["getWorkflowR
 type GetWorkflowRunResponse = RestEndpointMethodTypes["actions"]["getWorkflowRun"]["response"];
 
 type GertWorkflowRunJobsParams = RestEndpointMethodTypes["actions"]["listJobsForWorkflowRun"]["parameters"];
-type GetWorkflowRunJobsResponse = Pick<ActionsListJobsForWorkflowRunResponseData, "jobs">;
+type GetWorkflowRunJobsResponse = ActionsListJobsForWorkflowRunResponseData["jobs"];
 
 type CreateCommitStatusParameters = RestEndpointMethodTypes["repos"]["createCommitStatus"]["parameters"];
 type CreateCommitStatusResponse = RestEndpointMethodTypes["repos"]["createCommitStatus"]["response"];
@@ -29,6 +30,8 @@ const getWorkflowRun = async (parameters: GetWorkflowRunParameters): Promise<Get
 const createCommitStatus = async (params: CreateCommitStatusParameters): Promise<CreateCommitStatusResponse> => {
   const octokit = getOctokit();
 
+  core.info(`Updating commit status for sha '${params.sha}' to ${params.state}`);
+
   return await octokit.repos.createCommitStatus(params);
 };
 
@@ -36,6 +39,15 @@ const listJobsForWorkflowRun = async (params: GertWorkflowRunJobsParams): Promis
   const octokit = getOctokit();
 
   return await octokit.paginate(octokit.actions.listJobsForWorkflowRun, params);
+};
+
+export type {
+  GetWorkflowRunParameters,
+  GetWorkflowRunResponse,
+  GertWorkflowRunJobsParams,
+  GetWorkflowRunJobsResponse,
+  CreateCommitStatusParameters,
+  CreateCommitStatusResponse,
 };
 
 export { getWorkflowRun, createCommitStatus, listJobsForWorkflowRun };
