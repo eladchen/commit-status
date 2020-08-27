@@ -47,7 +47,6 @@ const createCommitStatus = (params) => __awaiter(void 0, void 0, void 0, functio
 exports.createCommitStatus = createCommitStatus;
 const listJobsForWorkflowRun = (params) => __awaiter(void 0, void 0, void 0, function* () {
     const octokit = getOctokit();
-    const workflowRunJobs = yield octokit.paginate(octokit.actions.listJobsForWorkflowRun, params);
-    return workflowRunJobs;
+    return yield octokit.paginate(octokit.actions.listJobsForWorkflowRun, params);
 });
 exports.listJobsForWorkflowRun = listJobsForWorkflowRun;

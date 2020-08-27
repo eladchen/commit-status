@@ -1,5 +1,6 @@
 import * as github from "@actions/github";
 import { GitHub } from "@actions/github/lib/utils";
+import { ActionsListJobsForWorkflowRunResponseData } from "@octokit/types";
 import { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 
 import { tokenInput } from "./action-inputs";
@@ -8,7 +9,7 @@ type GetWorkflowRunParameters = RestEndpointMethodTypes["actions"]["getWorkflowR
 type GetWorkflowRunResponse = RestEndpointMethodTypes["actions"]["getWorkflowRun"]["response"];
 
 type GertWorkflowRunJobsParams = RestEndpointMethodTypes["actions"]["listJobsForWorkflowRun"]["parameters"];
-type GetWorkflowRunJobsResponse = RestEndpointMethodTypes["actions"]["listJobsForWorkflowRun"]["response"];
+type GetWorkflowRunJobsResponse = Pick<ActionsListJobsForWorkflowRunResponseData, "jobs">;
 
 type CreateCommitStatusParameters = RestEndpointMethodTypes["repos"]["createCommitStatus"]["parameters"];
 type CreateCommitStatusResponse = RestEndpointMethodTypes["repos"]["createCommitStatus"]["response"];
@@ -33,11 +34,8 @@ const createCommitStatus = async (params: CreateCommitStatusParameters): Promise
 
 const listJobsForWorkflowRun = async (params: GertWorkflowRunJobsParams): Promise<GetWorkflowRunJobsResponse> => {
   const octokit = getOctokit();
-  const workflowRunJobs = await octokit.paginate(octokit.actions.listJobsForWorkflowRun, params);
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  return workflowRunJobs;
+  return await octokit.paginate(octokit.actions.listJobsForWorkflowRun, params);
 };
 
 export { getWorkflowRun, createCommitStatus, listJobsForWorkflowRun };

@@ -155,12 +155,8 @@ describe("update commit status action", () => {
       data: {},
     });
 
-    listJobsForWorkflowRun.mockReturnValueOnce({
-      // @ts-expect-error silence, I kill you 💀💣!
-      data: {
-        jobs: [{ name: "job name", conclusion: jobConclusion }],
-      },
-    });
+    // @ts-expect-error silence, I kill you 💀💣!
+    listJobsForWorkflowRun.mockReturnValueOnce([{ name: "job name", conclusion: jobConclusion }]);
 
     await withInputs(inputs, async () => {
       return withContext(context, async () => {
