@@ -1,5 +1,5 @@
 // https://docs.github.com/en/rest/reference/repos#create-a-commit-status
-export enum CommitStatusState {
+export const enum CommitStatusState {
   ERROR = "error",
   FAILURE = "failure",
   PENDING = "pending",
@@ -7,7 +7,7 @@ export enum CommitStatusState {
 }
 
 // https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context
-export enum StepConclusion {
+export const enum StepConclusion {
   SUCCESS = "success",
   FAILURE = "failure",
   CANCELLED = "cancelled",
@@ -15,7 +15,7 @@ export enum StepConclusion {
 }
 
 // https://github.community/t/documentation-for-workflow-jobs-is-ambiguous/129158
-export enum JobConclusion {
+export const enum JobConclusion {
   null,
   "failure",
   "success",
