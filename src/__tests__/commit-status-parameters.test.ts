@@ -33,7 +33,7 @@ describe(commitStatusParameters, () => {
     const getWorkflowRun = jest.spyOn(octokit, "getWorkflowRun");
 
     getWorkflowRun.mockReturnValueOnce({
-      // @ts-expect-error silence, I kill you 💀💣!
+      // @ts-expect-error silence, I kill you 💀 💣!
       data: {
         html_url: expected,
       },
