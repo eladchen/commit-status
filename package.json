@@ -1,6 +1,10 @@
 {
   "private": true,
   "main": "build/compiled/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eladchen/commit-status"
+  },
   "scripts": {
     "outdated": "npx npm-check -u",
     "release": "cross-env HUSKY_SKIP_HOOKS=1 semantic-release",
