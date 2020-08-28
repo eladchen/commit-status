@@ -112,9 +112,9 @@ describe("post action", () => {
     jest.restoreAllMocks();
   });
 
-  test("updates commit status", async () => {
+  test("updates commit status state to failure", async () => {
     const runId = 1;
-    const jobName = "my job";
+    const jobName = "failing job";
     const context = new Context();
     const inputs = {
       token: "123",
@@ -138,7 +138,7 @@ describe("post action", () => {
       return [
         {
           name: jobName,
-          steps: [{ status: "in_progress" }, { conclusion: "failure" }],
+          steps: [{ status: "in_progress" }, { conclusion: "failure" }, { conclusion: "success" }],
         },
       ];
     });
@@ -148,6 +148,60 @@ describe("post action", () => {
         interceptCreateCommitStatus(inputs, (_path, body) => {
           const expected = {
             state: "failure",
+            accept: inputs.accept,
+            context: inputs.context,
+            target_url: inputs.target_url,
+            description: inputs.description,
+          };
+
+          expect(body).toEqual(expect.objectContaining(expected));
+
+          resolve();
+        });
+
+        withContext(context, () => {
+          post.action();
+        });
+      });
+    });
+  });
+
+  test("updates commit status state to success", async () => {
+    const runId = 2;
+    const jobName = "succeeding job";
+    const context = new Context();
+    const inputs = {
+      token: "123",
+      "update-commit-status": "true",
+
+      sha: "sha",
+      repo: "repo",
+      owner: "owner",
+      accept: "accept",
+      context: "context",
+      target_url: "target_url",
+      description: "description",
+    };
+    const intercept = nock(GITHUB_API_URL);
+    const listJobsForWorkflowRunUrl = `/repos/${inputs.owner}/${inputs.repo}/actions/runs/${runId}/jobs`;
+
+    context.runId = runId;
+    context.job = jobName;
+
+    intercept.get(listJobsForWorkflowRunUrl).reply(200, () => {
+      return [
+        {
+          name: jobName,
+          steps: [{ status: "in_progress" }, { conclusion: "success" }],
+        },
+      ];
+    });
+
+    await withInputs(inputs, () => {
+      return new Promise((resolve) => {
+        interceptCreateCommitStatus(inputs, (_path, body) => {
+          const expected = {
+            state: "success",
             accept: inputs.accept,
             context: inputs.context,
             target_url: inputs.target_url,
