@@ -1,7 +1,4 @@
 // https://jestjs.io/docs/en/configuration
-
-process.env.LOG_LEVEL = "off";
-
 module.exports = {
   rootDir: "./",
 
@@ -24,7 +21,7 @@ module.exports = {
       statements: -10,
     },
   },
-  collectCoverageFrom: ["src/**"],
+  collectCoverageFrom: ["src/**", "!src/__tests__/**"],
 
   setupFilesAfterEnv: ["jest-expect-message"],
 };

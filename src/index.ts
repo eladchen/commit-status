@@ -30,6 +30,7 @@ const entryPoint = async (): Promise<void> => {
   }
 };
 
+/* istanbul ignore if */
 if (require.main === module) {
   entryPoint();
 }
