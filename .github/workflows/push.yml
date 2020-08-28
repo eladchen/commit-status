@@ -64,5 +64,5 @@ jobs:
           GIT_COMMITTER_NAME: ${{ secrets.BOT_NAME }}
           GIT_COMMITTER_EMAIL: ${{ secrets.BOT_EMAIL }}
 
-          GITHUB_TOKEN: ${{ secrets.BOT_PUSH_PAT }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: npm run release
