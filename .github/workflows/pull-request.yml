@@ -1,0 +1,58 @@
+# https://frontside.com/blog/2020-05-26-github-actions-pull_request
+
+name: pull request
+
+on:
+  pull_request:
+    # opened           = pull request is created
+    # edited           = title, body, or the base branch of the PR is modified
+    # synchronize      = commit(s) pushed to the pull request
+    # ready_for_review = pull request is taken out from draft mode
+    types: [ opened, edited, synchronize, ready_for_review ]
+
+env:
+  # This set implicitly by GitHub, but I rather be explicit about it.
+  CI: true
+
+jobs:
+  lint:
+    if: ${{ github.event.action != 'closed' }}
+
+    runs-on: ubuntu-latest
+
+    env:
+      npm_config_cache: $HOME/.npm
+      npm_cache_key: build-node-modules-cache
+
+    steps:
+      # https://github.com/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Determine Node.js version to use
+        run: echo "::set-output name=version::$(cat .nvmrc)"
+        id: nvm
+
+      # https://github.com/actions/setup-node
+      - name: Setup Node.js ${{ steps.nvm.outputs.version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ steps.nvm.outputs.version }}
+
+      # https://github.com/actions/cache
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.npm_config_cache }}
+          key: ${{ env.npm_cache_key }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ env.npm_cache_key }}-
+
+      - name: lint
+        run: |
+          FIRST_COMMIT_SHA=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" ${{ github.event.pull_request.commits_url }} | jq -r '.[0].sha')
+          npm ci
+          npx commitlint --from $FIRST_COMMIT_SHA^
