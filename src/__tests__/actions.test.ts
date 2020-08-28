@@ -66,10 +66,8 @@ describe("main action", () => {
     };
 
     await withInputs(inputs, () => {
-      return new Promise((resolve, reject) => {
-        const intercept = nock(GITHUB_API_URL);
-
-        intercept.post(`/repos/${inputs.owner}/${inputs.repo}/statuses/${inputs.sha}`).reply(200, (_path, body) => {
+      return new Promise((resolve) => {
+        interceptCreateCommitStatus(inputs, (_path, body) => {
           const expected = {
             state: "pending",
             accept: inputs.accept,
