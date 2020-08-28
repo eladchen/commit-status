@@ -3,9 +3,13 @@ name: 'Ben Rodríguez'
 author: Elad Chen
 
 description: >
-  Set the commit status for workflows triggered by bvr.
+  Update / Create commit status of a given SHA.
 
   See https://docs.github.com/en/rest/reference/repos#create-a-commit-status
+  
+  *Note*:
+  This is action is crafted specifically workflows for triggered by Ben Rodriguez (Bot).
+  But can be 100 configured using the action inputs.
 
 branding:
   icon: shield
@@ -18,7 +22,7 @@ inputs:
     default: '${{ github.token }}'
 
   update-commit-status:
-    description: 'Whether to update the commit status to the workflow run conclusion'
+    description: 'enable / disable commit status updates'
     required: false
     default: 'true'
 
