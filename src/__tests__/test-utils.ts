@@ -15,27 +15,21 @@ const withInputs = async <T>(inputs: { [name: string]: string }, cb: (...args: a
     return value;
   });
 
-  let error, value;
-
   try {
-    value = await cb();
-  } catch (e) {
-    error = e;
+    return await cb();
+  } finally {
+    spyInstance.mockRestore();
   }
-
-  spyInstance.mockRestore();
-
-  return error ? Promise.reject(error) : Promise.resolve(value);
 };
 
-const withContext = <T>(context: Context, cb: () => T) => {
+const withContext = async <T>(context: Context, cb: () => T): Promise<T> => {
   const c = github.context;
 
   try {
     // @ts-expect-error replacing context
     github.context = context;
 
-    return cb();
+    return await cb();
   } finally {
     // @ts-expect-error restoring context
     github.context = c;

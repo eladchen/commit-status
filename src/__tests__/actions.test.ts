@@ -1,3 +1,4 @@
+import nock from "nock";
 import * as core from "@actions/core";
 import { Context } from "@actions/github/lib/context";
 
@@ -7,7 +8,18 @@ import * as post from "../action-post";
 import { withContext, withInputs } from "./test-utils";
 import { entryPoint, isPostActionEnvVariable } from "../index";
 import * as commitStatusParams from "../commit-status-parameters";
-import * as updateCommitStatus from "../action-update-commit-status";
+
+const GITHUB_API_URL = "https://api.github.com";
+
+const commitStatusUrl = ({ owner, repo, sha }) => {
+  return `/repos/${owner}/${repo}/statuses/${sha}`;
+};
+
+const interceptCreateCommitStatus = (params, cb) => {
+  const interceptor = nock(GITHUB_API_URL);
+
+  interceptor.post(commitStatusUrl(params)).reply(200, cb);
+};
 
 describe("main action", () => {
   afterEach(() => {
@@ -25,11 +37,12 @@ describe("main action", () => {
       description: "description",
     };
     const setOutput = jest.spyOn(core, "setOutput");
+    const createCommitStatus = jest.spyOn(octokit, "createCommitStatus");
     const commitStatusParameters = jest.spyOn(commitStatusParams, "commitStatusParameters");
-    const updateCommitStatusAction = jest.spyOn(updateCommitStatus, "action");
 
+    // @ts-expect-error silence, I kill you 💀 💣!
+    createCommitStatus.mockResolvedValue(null);
     commitStatusParameters.mockResolvedValue(expected);
-    updateCommitStatusAction.mockResolvedValue(undefined);
 
     await main.action();
 
@@ -39,7 +52,7 @@ describe("main action", () => {
   });
 
   test("updates commit status", async () => {
-    const expected = {
+    const inputs = {
       sha: "sha",
       repo: "repo",
       owner: "owner",
@@ -47,17 +60,50 @@ describe("main action", () => {
       context: "context",
       target_url: "target_url",
       description: "description",
+
+      token: "123",
+      "update-commit-status": "true",
     };
-    const commitStatusParameters = jest.spyOn(commitStatusParams, "commitStatusParameters");
-    const updateCommitStatusAction = jest.spyOn(updateCommitStatus, "action");
 
-    commitStatusParameters.mockResolvedValue(expected);
-    updateCommitStatusAction.mockResolvedValueOnce(undefined);
+    await withInputs(inputs, () => {
+      return new Promise((resolve, reject) => {
+        const intercept = nock(GITHUB_API_URL);
 
-    await main.action();
+        intercept.post(`/repos/${inputs.owner}/${inputs.repo}/statuses/${inputs.sha}`).reply(200, (_path, body) => {
+          const expected = {
+            state: "pending",
+            accept: inputs.accept,
+            context: inputs.context,
+            target_url: inputs.target_url,
+            description: inputs.description,
+          };
 
-    expect(updateCommitStatusAction).toHaveBeenCalledWith(expected);
-    expect(updateCommitStatusAction).toHaveBeenCalledTimes(1);
+          expect(body).toEqual(expect.objectContaining(expected));
+
+          resolve();
+        });
+
+        main.action();
+      });
+    });
+  });
+
+  test("does not update commit status", async () => {
+    const inputs = {
+      sha: "sha",
+      repo: "repo",
+      owner: "owner",
+      target_url: "target_url",
+      token: "123",
+      "update-commit-status": "false",
+    };
+    const createCommitStatus = jest.spyOn(octokit, "createCommitStatus");
+
+    await withInputs(inputs, async () => {
+      await main.action();
+
+      expect(createCommitStatus).not.toBeCalled();
+    });
   });
 });
 
@@ -67,7 +113,13 @@ describe("post action", () => {
   });
 
   test("updates commit status", async () => {
-    const expected = {
+    const runId = 1;
+    const jobName = "my job";
+    const context = new Context();
+    const inputs = {
+      token: "123",
+      "update-commit-status": "true",
+
       sha: "sha",
       repo: "repo",
       owner: "owner",
@@ -76,20 +128,68 @@ describe("post action", () => {
       target_url: "target_url",
       description: "description",
     };
-    const commitStatusParameters = jest.spyOn(commitStatusParams, "commitStatusParameters");
-    const updateCommitStatusAction = jest.spyOn(updateCommitStatus, "action");
+    const intercept = nock(GITHUB_API_URL);
+    const listJobsForWorkflowRunUrl = `/repos/${inputs.owner}/${inputs.repo}/actions/runs/${runId}/jobs`;
 
-    commitStatusParameters.mockResolvedValue(expected);
-    updateCommitStatusAction.mockResolvedValueOnce(undefined);
+    context.runId = runId;
+    context.job = jobName;
 
-    await post.action();
+    intercept.get(listJobsForWorkflowRunUrl).reply(200, () => {
+      return [
+        {
+          name: jobName,
+          steps: [{ status: "in_progress" }, { conclusion: "failure" }],
+        },
+      ];
+    });
 
-    expect(updateCommitStatusAction).toHaveBeenCalledWith(expected);
-    expect(updateCommitStatusAction).toHaveBeenCalledTimes(1);
+    await withInputs(inputs, () => {
+      return new Promise((resolve) => {
+        interceptCreateCommitStatus(inputs, (_path, body) => {
+          const expected = {
+            state: "failure",
+            accept: inputs.accept,
+            context: inputs.context,
+            target_url: inputs.target_url,
+            description: inputs.description,
+          };
+
+          expect(body).toEqual(expect.objectContaining(expected));
+
+          resolve();
+        });
+
+        withContext(context, () => {
+          post.action();
+        });
+      });
+    });
+  });
+
+  test("does not update commit status", async () => {
+    const inputs = {
+      sha: "sha",
+      repo: "repo",
+      owner: "owner",
+      target_url: "target_url",
+      token: "123",
+      "update-commit-status": "false",
+    };
+    const createCommitStatus = jest.spyOn(octokit, "createCommitStatus");
+
+    await withInputs(inputs, async () => {
+      await post.action();
+
+      expect(createCommitStatus).not.toBeCalled();
+    });
   });
 });
 
 describe("action entry-point", () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   test("calls main action", async () => {
     const mainAction = jest.spyOn(main, "action");
 
@@ -109,116 +209,25 @@ describe("action entry-point", () => {
 
     expect(mainAction).toHaveBeenCalledTimes(1);
   });
-});
 
-describe("update commit status action", () => {
-  let createCommitStatus: jest.SpyInstance;
-  let listJobsForWorkflowRun: jest.SpyInstance;
+  test("calls core.setFailed", async () => {
+    const expectedError = new Error();
+    const mainAction = jest.spyOn(main, "action");
+    const postAction = jest.spyOn(post, "action");
+    const setFailed = jest.spyOn(core, "setFailed");
 
-  beforeAll(() => {
-    createCommitStatus = jest.spyOn(octokit, "createCommitStatus");
-    listJobsForWorkflowRun = jest.spyOn(octokit, "listJobsForWorkflowRun");
-  });
+    mainAction.mockRejectedValueOnce(expectedError);
+    postAction.mockRejectedValueOnce(expectedError);
 
-  afterAll(() => {
-    createCommitStatus.mockRestore();
+    await entryPoint();
 
-    listJobsForWorkflowRun.mockRestore();
-  });
+    process.env[isPostActionEnvVariable] = "1";
 
-  afterEach(() => {
-    createCommitStatus.mockReset();
-    listJobsForWorkflowRun.mockReset();
-  });
+    await entryPoint();
 
-  test("commit status is updated", async () => {
-    const context = new Context();
-    const jobConclusion = null;
-    const inputs = { "update-commit-status": "true", token: "123" };
-    const commitStatusParameters = {
-      sha: "sha",
-      repo: "repo",
-      owner: "owner",
-      accept: "accept",
-      context: "context",
-      target_url: "target_url",
-      description: "description",
-    };
-    const createCommitStatus = jest.spyOn(octokit, "createCommitStatus");
-    const listJobsForWorkflowRun = jest.spyOn(octokit, "listJobsForWorkflowRun");
-    const expectedCommitStatusState = updateCommitStatus.jobConclusionToCommitStatusState(jobConclusion);
+    delete process.env[isPostActionEnvVariable];
 
-    context.runId = 1;
-
-    createCommitStatus.mockReturnValueOnce({
-      // @ts-expect-error silence, I kill you 💀💣!
-      data: {},
-    });
-
-    // @ts-expect-error silence, I kill you 💀💣!
-    listJobsForWorkflowRun.mockReturnValueOnce([{ name: "job name", conclusion: jobConclusion }]);
-
-    await withInputs(inputs, async () => {
-      return withContext(context, async () => {
-        await updateCommitStatus.action(commitStatusParameters);
-
-        expect(listJobsForWorkflowRun).toHaveBeenCalledWith({
-          owner: commitStatusParameters.owner,
-          repo: commitStatusParameters.repo,
-          run_id: context.runId,
-        });
-
-        expect(createCommitStatus).toHaveBeenCalledWith({
-          ...commitStatusParameters,
-          state: expectedCommitStatusState,
-        });
-      });
-    });
-  });
-
-  test("commit status is not updated", async () => {
-    const inputs = { "update-commit-status": "false" };
-    const commitStatusParameters = {
-      sha: "sha",
-      repo: "repo",
-      owner: "owner",
-      accept: "accept",
-      context: "context",
-      target_url: "target_url",
-      description: "description",
-    };
-
-    await withInputs(inputs, async () => {
-      await updateCommitStatus.action(commitStatusParameters);
-
-      expect(createCommitStatus).not.toHaveBeenCalled();
-      expect(listJobsForWorkflowRun).not.toHaveBeenCalled();
-    });
-  });
-
-  test("unknown job conclusion throws", () => {
-    const jobConclusion = "bad";
-    const actual = () => {
-      updateCommitStatus.jobConclusionToCommitStatusState(jobConclusion);
-    };
-
-    expect(actual).toThrowError(`unknown job conclusion '${jobConclusion}'`);
-  });
-
-  test("job conclusion is mapped to a commit status", () => {
-    const jobConclusionCommitStatus = [
-      [null, "pending"],
-      ["failure", "failure"],
-      ["success", "success"],
-      ["timed_out", "error"],
-      ["cancelled", "failure"],
-      ["neutral", "success"],
-    ];
-
-    for (const [jobConclusion, expected] of jobConclusionCommitStatus) {
-      const commitStatusState = updateCommitStatus.jobConclusionToCommitStatusState(jobConclusion);
-
-      expect(commitStatusState).toStrictEqual(expected);
-    }
+    expect(setFailed, "main action").toHaveBeenNthCalledWith(1, expectedError);
+    expect(setFailed, "post action").toHaveBeenNthCalledWith(1, expectedError);
   });
 });
