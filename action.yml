@@ -8,8 +8,8 @@ description: >
   See https://docs.github.com/en/rest/reference/repos#create-a-commit-status
   
   *Note*:
-  This is action is crafted specifically workflows for triggered by Ben Rodriguez (Bot).
-  But can be 100 configured using the action inputs.
+  This action is crafted in mind of workflows triggered by Ben Rodriguez (Bot).
+  The action however, can be 100% configured for custom usage (using the action inputs).
 
 branding:
   icon: shield
