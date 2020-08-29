@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/eladchen/commit-status/compare/v1.1.0...v1.2.0) (2020-08-29)
+
+
+### Features
+
+* commit build folder on release ([18489a5](https://github.com/eladchen/commit-status/commit/18489a596c52231430887090ab9d707045f13992))
+
 # [1.1.0](https://github.com/eladchen/commit-status/compare/v1.0.0...v1.1.0) (2020-08-29)
 
 
