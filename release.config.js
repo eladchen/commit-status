@@ -15,7 +15,7 @@ module.exports = {
 
     // https://github.com/semantic-release/git
     plugin("@semantic-release/git", {
-      assets: ["package.json", "CHANGELOG.md", "build"],
+      assets: ["package.json", "CHANGELOG.md", "build/bundled"],
     }),
 
     // https://github.com/semantic-release/github

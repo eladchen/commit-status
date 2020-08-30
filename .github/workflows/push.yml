@@ -1,19 +1,25 @@
 name: push
+
 on:
   push:
+
 env:
   CI: true
   GH_BOT_NAME: GitHub Action
   GH_BOT_EMAIL: action@github.com
 
 jobs:
-  ci-cd:
+  push:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
-    name: ci-cd
+
+    name: continuous delivery
+
     runs-on: ubuntu-latest
+
     env:
-      npm_config_cache: $HOME/.npm
-      npm_cache_key: build-node-modules-cache
+      NPM_CONFIG_CACHE: $HOME/.npm
+      NPM_CACHE_KEY: build-node-modules-cache
+
     steps:
       # https://github.com/actions/checkout
       - name: Checkout
@@ -35,29 +41,28 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v2
         with:
-          path: ${{ env.npm_config_cache }}
-          key: ${{ env.npm_cache_key }}-${{ hashFiles('**/package-lock.json') }}
+          path: ${{ env.NPM_CONFIG_CACHE }}
+          key: ${{ env.NPM_CACHE_KEY }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: ${{ env.npm_cache_key }}-
 
-      - name: install
+      - name: Install
         run: npm ci
 
-      - name: lint
+      - name: Lint
         run: npm run lint
 
-      - name: test
+      - name: Test
         run: npm test
 
-      - name: build
+      - name: Build
         run: npm run build
 
       # https://github.com/codecov/codecov-action
-      - name: Collect coverage report
+      - name: Upload Code Coverage
         uses: codecov/codecov-action@v1
         with:
           fail_ci_if_error: true
           directory: ./build/coverage
-          name: "eladchen/commit-status"
 
       - name: Release
         env:

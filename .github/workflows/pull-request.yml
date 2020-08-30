@@ -15,15 +15,16 @@ env:
   CI: true
 
 jobs:
-  lint:
+  pull:
     if: ${{ github.event.action != 'closed' }}
+
+    name: continuous integration
 
     runs-on: ubuntu-latest
 
     env:
-      npm_config_cache: $HOME/.npm
-      npm_cache_key: build-node-modules-cache
-
+      NPM_CONFIG_CACHE: $HOME/.npm
+      NPM_CACHE_KEY: build-node-modules-cache
     steps:
       # https://github.com/actions/checkout
       - name: Checkout
@@ -44,14 +45,14 @@ jobs:
           node-version: ${{ steps.nvm.outputs.version }}
 
       # https://github.com/actions/cache
-      - name: Cache node modules
+      - name: Cache node_modules
         uses: actions/cache@v2
         with:
-          path: ${{ env.npm_config_cache }}
-          key: ${{ env.npm_cache_key }}-${{ hashFiles('**/package-lock.json') }}
+          path: ${{ env.NPM_CONFIG_CACHE }}
+          key: ${{ env.NPM_CACHE_KEY }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: ${{ env.npm_cache_key }}-
 
-      - name: lint
+      - name: Lint Commits
         run: |
           FIRST_COMMIT_SHA=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" ${{ github.event.pull_request.commits_url }} | jq -r '.[0].sha')
           npm ci
