@@ -4,7 +4,6 @@ module.exports = {
 
   preset: "ts-jest",
   testEnvironment: "node",
-  displayName: "Unit Tests",
   transform: {
     "^.+\\.ts?$": "ts-jest",
   },

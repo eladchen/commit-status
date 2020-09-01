@@ -15,7 +15,7 @@ env:
   CI: true
 
 jobs:
-  pull:
+  pull-request:
     if: ${{ github.event.action != 'closed' }}
 
     name: continuous integration

@@ -17,9 +17,9 @@ export const enum StepConclusion {
 // https://github.community/t/documentation-for-workflow-jobs-is-ambiguous/129158
 export const enum JobConclusion {
   null,
-  "failure",
-  "success",
-  "timed_out",
-  "cancelled",
-  "neutral",
+  SUCCESS = "success",
+  FAILURE = "failure",
+  NEUTRAL = "neutral",
+  TIMED_OUT = "timed_out",
+  CANCELLED = "cancelled",
 }

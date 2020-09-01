@@ -33,7 +33,6 @@ describe(commitStatusParameters, () => {
     };
 
     context.job = "[Job Name]";
-    context.workflow = "[Workflow Name]";
     context.eventName = "workflow_dispatch";
 
     await withInputs(inputs, async () => {

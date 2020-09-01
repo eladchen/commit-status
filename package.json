@@ -13,11 +13,9 @@
     "compile": "rimraf compiled && tsc && ncc build --minify --out build/bundled",
     "test": "jest --projects .",
     "test:watch": "npm run test -- --watchAll",
-    "test:integration": "jest --projects src/drivers/github-probot/__integration__",
     "build": "npm run lint && npm run compile",
     "clean": "rimraf build",
-    "clean:build": "npm run clean && npm run build",
-    "github-probot": "ts-node-dev --debounce 2000 ./src/drivers/github-probot/bot.ts"
+    "clean:build": "npm run clean && npm run build"
   },
   "devDependencies": {
     "@commitlint/cli": "^9.1.2",

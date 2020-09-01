@@ -10,7 +10,7 @@ const getCurrentJobSteps = async (params) => {
   const started = Date.now();
   const sleep = (resolve) => setTimeout(resolve, 2000);
   const findCurrentJob = ({ name }) => name === params.jobName;
-  const isInProgressStep = ({ status }) => status === "in_progress";
+  const inProgressStep = ({ status }) => status === "in_progress";
   const listJobsForWorkflowRunParams = {
     owner: params.owner,
     repo: params.repo,
@@ -20,7 +20,7 @@ const getCurrentJobSteps = async (params) => {
   while (true) {
     const workflowRunJobs = await octokit.listJobsForWorkflowRun(listJobsForWorkflowRunParams);
     const currentJob = workflowRunJobs.find(findCurrentJob) as typeof workflowRunJobs[0];
-    const inProgressSteps = currentJob.steps.filter(isInProgressStep);
+    const inProgressSteps = currentJob.steps.filter(inProgressStep);
 
     if (inProgressSteps.length === 1) {
       return currentJob.steps;
